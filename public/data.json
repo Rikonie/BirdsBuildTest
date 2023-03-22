@@ -1,0 +1,47 @@
+{
+  "deals":[{
+    "id": 1,
+    "name": "Пиломатфыфериалы брус доска",
+    "description": "",
+    "type": "Аукцион",
+    "address": "",
+    "sales": "",
+    "productType": "",
+    "price": "",
+    "count":"",
+    "pricePiece": "",
+    "paid": "",
+    "inFavorites": "",
+    "image": ""
+  }],
+  "favorites": [{
+    "id": 1,
+    "name": "Пиломатфыфериалы брус доска",
+    "description": "",
+    "type": "Аукцион",
+    "address": "",
+    "sales": "",
+    "productType": "",
+    "price": "",
+    "count":"",
+    "pricePiece": "",
+    "inDeals": "",
+    "inFavorites": "",
+    "image": ""
+  }],
+  "warehouse": [{
+    "id": 1,
+    "name": "Пиломатфыфериалы брус доска",
+    "description": "",
+    "type": "Аукцион",
+    "address": "",
+    "sales": "",
+    "productType": "",
+    "price": "",
+    "count":"",
+    "pricePiece": "",
+    "inDeals": "",
+    "image": "",
+    "inFavorites": false
+  }]
+}
