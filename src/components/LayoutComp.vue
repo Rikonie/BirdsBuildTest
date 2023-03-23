@@ -10,11 +10,16 @@
     <form @submit.prevent="searchMethod()">
       <input v-model="searchName">
       <button>Поиск</button>
-      <p>{{ $route.path}}</p>
     </form>
+    <button @click="linkMet()">
     <router-link to="/" exact>Warehouse</router-link>
-    <router-link to="/deals" exact>Deals</router-link>
-    <router-link to="/favorites" exact>Favorites</router-link>
+    </button>
+    <button @click="linkMet()">
+      <router-link to="/deals" exact>Deals</router-link>
+    </button>
+    <button @click="linkMet()">
+      <router-link to="/favorites" exact>Favorites</router-link>
+    </button>
   </div>
 </template>
 
@@ -46,6 +51,10 @@ export default defineComponent({
     },
     searchMethod(){
      this.warehouseStore.searchData(this.searchName as string)
+    },
+    linkMet(){
+    this.searchName = ""
+    this.warehouseStore.searchData(this.searchName)
     }
   }
 });

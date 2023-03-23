@@ -87,7 +87,7 @@ export const useWarehouseStore = defineStore('warehouse', {
        searchData(name: string) {
            this.setFilter(this.filter)
            localStorage.setItem("search", name)
-            if (name != "") {
+            if (name) {
                 this.filteredData = this.filteredData.filter((x: CommonData) => x.name.toUpperCase().indexOf(name.toUpperCase()) != -1)
                 this.favoritesData = this.favoritesData.filter((x: CommonData) => x.name.toUpperCase().indexOf(name.toUpperCase()) != -1)
                 this.dealsData = this.dealsData.filter((x: CommonData) => x.name.toUpperCase().indexOf(name.toUpperCase()) != -1)
