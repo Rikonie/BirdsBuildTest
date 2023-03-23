@@ -1,78 +1,100 @@
 import {defineStore} from "pinia";
 import {api} from "@/api";
-import {LocalStorageItem} from "@/models/localStorageItem";
-import {FavoritesAndWarehouseType} from "@/models/FavoritesAndWarehouseType";
+import {CommonData} from "@/models/commonData";
 
 export const useWarehouseStore = defineStore('warehouse', {
     state: () => ({
         data: null as any,
-        favorites: null as any
+        favoritesData: null as any,
+        dealsData: null as any,
+        filteredData: null as any,
+        filter: null as any,
+        favoriteIds: null as any,
+        dealsIds: null as any,
+        search: null as any
     }),
     actions: {
+        async getFavorites() {
+            if (!this.data) {
+                await this.fetchProducts();
+            }
+            const idLocalStr = localStorage.getItem("favoritesId")
+
+            if (idLocalStr != null){
+                this.favoriteIds = JSON.parse(idLocalStr)
+            } else {
+                this.favoriteIds = await api.get("").then((resp: any) => {
+                    return resp.data.favoriteIds
+                })
+            }
+            if (this.favoriteIds) {
+                this.favoritesData = this.data?.filter((x: any) => this.favoriteIds?.includes(x.id));
+            } else {
+                this.favoritesData = [];
+            }
+        },
+        async getDeals() {
+            if (!this.data) {
+                await this.fetchProducts();
+            }
+            const idLocalStr = localStorage.getItem("dealsIds")
+
+            if (idLocalStr != null){
+                this.dealsIds = JSON.parse(idLocalStr)
+            } else {
+                this.dealsIds = await api.get("").then((resp: any) => {
+                    return resp.data.dealsIds
+                })
+            }
+            if (this.dealsIds) {
+                this.dealsData = this.data?.filter((x: any) => this.dealsIds?.includes(x.id));
+            } else {
+                this.dealsData = [];
+            }
+        },
         async fetchProducts() {
             setTimeout(async () => {
-                const result: FavoritesAndWarehouseType[] = await api.get("").then((resp: any) => {
+                this.data = await api.get("").then((resp: any) => {
+                    console.log(resp.data.warehouse)
                     return resp.data.warehouse
                 })
-                result.map((i) => {
-                    const itemStr: string | null = localStorage.getItem((i.id))
-                    if (itemStr != null) {
-                        const item: LocalStorageItem = JSON.parse(itemStr)
-                            i.inDeals = item.inDeals;
-                            i.inFavorites = item.isFavorite
-                    }
-                    this.data = result
-                })
+                this.filter = localStorage.getItem("filter")
+                if (!this.filter){
+                    this.filter = "Все"
+                }
+                this.search = localStorage.getItem("search")
+                if(!this.search){
+                    this.search=""
+                }
+                this.setFilter(this.filter)
+                this.searchData(this.search)
             }, 2000)
         },
-        addToFavorites(id: string) {
-            const itemStr: string | null = localStorage.getItem(id)
-            if (itemStr != null) {
-                let item: LocalStorageItem = JSON.parse(itemStr)
-                item.isFavorite = !item.isFavorite;
-                item = {...item}
-                console.log(item)
-                localStorage.setItem(id, JSON.stringify(item))
-            } else {
-                const item = new LocalStorageItem(id, true, false, false)
-                localStorage.setItem(id, JSON.stringify(item))
-            }
-            const findObj = this.data.find((e:FavoritesAndWarehouseType) => e.id ==id)
-            findObj.inFavorites = !findObj.inFavorites
-        },
-        addToDeals (id: string){
-            const itemStr: string | null = localStorage.getItem(id)
-            if (itemStr != null) {
-                let item: LocalStorageItem = JSON.parse(itemStr)
-                item.inDeals = !item.inDeals;
-                item = {...item}
-                console.log(item)
-                localStorage.setItem(id, JSON.stringify(item))
-            } else {
-                const item = new LocalStorageItem(id, false, true, false)
-                localStorage.setItem(id, JSON.stringify(item))
-            }
-            const findObj = this.data.find((e:FavoritesAndWarehouseType) => e.id ==id)
-            findObj.inDeals = !findObj.inDeals
-        },
-        // test (id: string, value:string){
-        //     const itemStr: string | null = localStorage.getItem(id)
-        //     //const key = value as keyof typeof LocalStorageItem
-        //     if (itemStr != null) {
-        //         let item: LocalStorageItem = JSON.parse(itemStr)
-        //         const key:keyof typeof item = value as keyof typeof item
-        //         item[key] = ;
-        //         item = {...item}
-        //         console.log(item)
-        //         localStorage.setItem(id, JSON.stringify(item))
-        //     } else {
-        //         const item = new LocalStorageItem(id, false, true, false)
-        //         localStorage.setItem(id, JSON.stringify(item))
-        //     }
-        //     const findObj = this.data.find((e:FavoritesAndWarehouseType) => e.id ==id)
-        //     findObj.inDeals = !status
-        //
-        // }
+       setFilter(filter: string) {
+            this.filter = filter;
+            localStorage.setItem("filter", filter)
+           this.favoritesData = this.data?.filter((x: any) => this.favoriteIds?.includes(x.id));
+           this.dealsData = this.data?.filter((x: any) => this.dealsIds?.includes(x.id));
+            if (filter == "Все") {
+                this.filteredData = this.data
 
+            } else {
+                this.filteredData = this.data.filter((x: CommonData) => x.type == filter);
+                this.favoritesData = this.favoritesData.filter((x: CommonData) => x.type == filter);
+                this.dealsData = this.dealsData.filter((x: CommonData) => x.type == filter);
+            }
+        },
+       searchData(name: string) {
+           this.setFilter(this.filter)
+           localStorage.setItem("search", name)
+            if (name != "") {
+                this.filteredData = this.filteredData.filter((x: CommonData) => x.name.toUpperCase().indexOf(name.toUpperCase()) != -1)
+                this.favoritesData = this.favoritesData.filter((x: CommonData) => x.name.toUpperCase().indexOf(name.toUpperCase()) != -1)
+                this.dealsData = this.dealsData.filter((x: CommonData) => x.name.toUpperCase().indexOf(name.toUpperCase()) != -1)
+            }
+        },
+        // addToDealsOrFavorites(id: string, value: CurrencySign) {
+        //     addItemTo(id, value, this.data)
+        // }
     },
 });

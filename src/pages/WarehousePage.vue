@@ -1,35 +1,38 @@
 <template>
-  <div class="hello">
+  <div v-if="!!warehouseStore.data" class="hello">
     <h1>warehouse</h1>
-    <div v-for="ware in warehouseStore.data" :key="ware.id">
-      {{JSON.stringify(ware)}}
-      {{ware.id}}
-      <button @click="warehouseStore.addToFavorites(ware.id)">Добавить в избранное</button>
-      <button @click="warehouseStore.addToDeals(ware.id)">Добавить в сделки</button>
+    <div v-for="ware in warehouseStore.filteredData" :key="ware.id">
+      {{ JSON.stringify(ware) }}
+<!--      <button @click="warehouseStore.addToDealsOrFavorites(ware.id, 'isFavorites')">Добавить в избранное</button>-->
+<!--      <button @click="warehouseStore.addToDealsOrFavorites(ware.id, 'inDeals')">Добавить в сделки</button>-->
+      <img :src="ware.image" alt="image">
     </div>
-    <p v-if="!!warehouseStore.data">{{ JSON.stringify(warehouseStore.data) }}</p>
-    <p v-else>Загрузка</p>
   </div>
+  <p v-else>Загрузка</p>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import {useWarehouseStore} from "@/store/warehouse";
+import {defineComponent} from 'vue';
+import {useWarehouseStore} from "@/store/warehouse"
 
 export default defineComponent({
   name: 'WarehousePage',
-  props: {
-    d: [],
+  data() {
+    return {
+      searchName: '',
+      filterData: ["Все", "Аукцион", "Прямые продажи"]
+    }
+
   },
-  setup(){
+  setup() {
 
     const warehouseStore = useWarehouseStore();
-    warehouseStore.fetchProducts();
+    warehouseStore.fetchProducts()
 
     return {
-      warehouseStore
+      warehouseStore,
     }
-  },
+  }
 });
 
 </script>
