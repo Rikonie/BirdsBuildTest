@@ -1,18 +1,18 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
-import LayoutComp from './components/LayoutComp.vue'
+import LayoutComponent from './components/LayoutComponent.vue'
 
 
 export default defineComponent({
   name: 'App',
   components:{
-    LayoutComp
+    LayoutComponent
   }
 });
 </script>
 
 <template>
-  <LayoutComp/>
+  <LayoutComponent/>
   <router-view></router-view>
 </template>
 

@@ -29,13 +29,12 @@ import {useWarehouseStore} from "@/store/warehouse"
 
 
 export default defineComponent({
-  name: 'LayoutComp',
+  name: 'LayoutComponent',
   data() {
     return {
       searchName: localStorage.getItem("search"),
       filterData: ["Все", "Аукцион", "Прямые продажи"]
     }
-
   },
   setup() {
 
