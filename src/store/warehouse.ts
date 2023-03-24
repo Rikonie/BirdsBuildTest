@@ -11,7 +11,8 @@ export const useWarehouseStore = defineStore('warehouse', {
         filter: null as any,
         favoriteIds: null as any,
         dealsIds: null as any,
-        search: null as any
+        search: null as any,
+        loading: false
     }),
     actions: {
         async getFavorites() {
@@ -36,7 +37,6 @@ export const useWarehouseStore = defineStore('warehouse', {
             if (!this.data) {
                 await this.fetchProducts();
             }
-
             const idLocalStr = localStorage.getItem("dealsIds")
             this.dealsIds = await api.get("").then((resp: any) => {
                 return resp.data.dealsIds
@@ -47,15 +47,17 @@ export const useWarehouseStore = defineStore('warehouse', {
             if (this.dealsIds) {
                 this.dealsData = []
                 console.log("Ids " + this.dealsIds)
-                this.dealsIds?.map((i: string) => {
-                    const item = this.data?.find((e: CommonData) => e.id == i)
+                this.dealsIds?.map((i: any) => {
+                    const item = this.data?.find((e: CommonData) => e.id == i.id)
                     if (item) {
+                        item.paid = i.paid
                         this.dealsData.push({...item})
                     }
                 })
             } else {
                 this.dealsData = []
             }
+
         },
         async fetchProducts() {
             setTimeout(async () => {
@@ -72,6 +74,7 @@ export const useWarehouseStore = defineStore('warehouse', {
                 }
                 await this.setFilter(this.filter)
                 await this.searchData(this.search)
+                this.loading=true
             }, 2000)
         },
         async setFilter(filter: string) {
@@ -125,13 +128,33 @@ export const useWarehouseStore = defineStore('warehouse', {
             const idsStr = localStorage.getItem("dealsIds")
             if (idsStr) {
                 const arrIds = JSON.parse(idsStr)
-                arrIds?.push(item.id)
+                arrIds?.push({id: item.id, paid: false})
                 this.dealsIds = arrIds
-                localStorage.setItem("dealsIds", JSON.stringify(this.dealsIds))
             } else {
-                this.dealsIds?.push(item.id)
-                localStorage.setItem("dealsIds", (JSON.stringify(this.dealsIds)))
+                this.dealsIds?.push({id: item.id, paid: false})
             }
+            localStorage.setItem("dealsIds", (JSON.stringify(this.dealsIds)))
+            await this.getDeals()
+        },
+        async toPaid (item:any) {
+            await this.getDeals()
+            const arrStr = localStorage.getItem("dealsIds")
+            if (arrStr){
+                const arr = JSON.parse(arrStr)
+                console.log("aerr "+arrStr)
+                const el = arr.findIndex((e:any)=>e.id==item.id && e.paid == false)
+                if(el!=-1){
+                    console.log("te "+el)
+                    arr[el].paid=true
+                    this.dealsIds=arr
+                }
+            } else {
+                const el = this.dealsIds?.findIndex((e:any)=>e.id==item.id && e.paid == false)
+                if(el!=-1){
+                    this.dealsIds[el].paid=true
+                }
+            }
+            localStorage.setItem("dealsIds", (JSON.stringify(this.dealsIds)))
             await this.getDeals()
         }
     },
