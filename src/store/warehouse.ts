@@ -66,7 +66,7 @@ export const useWarehouseStore = defineStore('warehouse', {
                 })
                 this.filter = localStorage.getItem("filter")
                 if (!this.filter) {
-                    this.filter = "Все"
+                    this.filter = "Все типы"
                 }
                 this.search = localStorage.getItem("search")
                 if (!this.search) {
@@ -82,7 +82,8 @@ export const useWarehouseStore = defineStore('warehouse', {
             localStorage.setItem("filter", filter)
             this.favoritesData = this.data?.filter((x: any) => this.favoriteIds?.includes(x.id));
             await this.getDeals()
-            if (filter == "Все") {
+            if (filter == "Все типы") {
+                console.log(filter)
                 this.filteredData = this.data
             } else {
                 this.filteredData = this.data?.filter((x: CommonData) => x.type == filter);
@@ -122,6 +123,7 @@ export const useWarehouseStore = defineStore('warehouse', {
                 localStorage.setItem("favoritesIds", (JSON.stringify(this.favoriteIds)))
             }
             await this.getFavorites()
+            await this.setFilter(this.filter)
         },
         async addToDeals(item: CommonData) {
             await this.getDeals()
@@ -135,6 +137,7 @@ export const useWarehouseStore = defineStore('warehouse', {
             }
             localStorage.setItem("dealsIds", (JSON.stringify(this.dealsIds)))
             await this.getDeals()
+            await this.setFilter(this.filter)
         },
         async toPaid (item:any) {
             await this.getDeals()

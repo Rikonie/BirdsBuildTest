@@ -1,5 +1,4 @@
 <template>
-  <div>{{warehouseStore.loading}}</div>
   <div v-if="!!warehouseStore.loading">
     <CardComponent :data="warehouseStore.dealsData" :add-to-favorite="warehouseStore.addToFavorite"/>
   </div>
