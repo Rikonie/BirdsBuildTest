@@ -38,7 +38,6 @@ export const useWarehouseStore = defineStore('warehouse', {
             }
         },
         async getDeals() {
-            this.loading=false
             if (!this.data) {
                 await this.fetchProducts();
             }
@@ -61,9 +60,9 @@ export const useWarehouseStore = defineStore('warehouse', {
             } else {
                 this.dealsData = []
             }
-            this.loading=true
         },
         async fetchProducts() {
+            this.loading = false;
             setTimeout(async () => {
                 this.data = await api.get("").then((resp: any) => {
                     return resp.data.warehouse
@@ -79,6 +78,7 @@ export const useWarehouseStore = defineStore('warehouse', {
                 await this.getFavorites()
                 await this.setFilter(this.filter)
                 await this.searchData(this.search)
+                this.loading = true;
             }, 2000)
         },
         async setFilter(filter: string) {

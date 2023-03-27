@@ -122,6 +122,7 @@ export default defineComponent({
 }
 
 .buttonLink {
+  font-family: 'Rubik';
   width: 86px;
   height: 60px;
   border: none;
@@ -148,6 +149,10 @@ export default defineComponent({
   background: #F4F5F9;
 }
 
+.buttonLink:hover{
+  background: #F4F5F9;
+}
+
 .buttonsFilter {
   display: flex;
   width: 304px;
@@ -165,9 +170,14 @@ export default defineComponent({
   color: #969DC3;
   background: #F4F5F9;
   cursor: pointer;
-  font-weight: 400;
+  font-family: 'Rubik';
+  font-weight: 500;
   font-size: 14px;
   line-height: 100%;
+}
+
+.buttonFilter:hover{
+  color: #2D3B87
 }
 
 .buttonFilterClick {
@@ -177,9 +187,11 @@ export default defineComponent({
   color: #2D3B87;
   background: #F4F5F9;
   cursor: pointer;
-  font-weight: 400;
+  font-family: 'Rubik';
+  font-weight: 500;
   font-size: 14px;
   line-height: 100%;
+
 }
 
 .searchContainer {
@@ -201,20 +213,25 @@ export default defineComponent({
 }
 
 .inputSearch {
+  font-family: 'Rubik';
   color: #2D3B87;
   width: 228px;
   height: 25px;
   border: none;
   font-size: 15px;
   outline: none;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 100%;
 }
 
 .linkText {
+  font-family: 'Rubik';
+  font-style: normal;
+  font-size: 13px;
+  line-height: 100%;
   text-decoration: none;
   color: #2D3B87;
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 1000;
+
 }
 </style>
