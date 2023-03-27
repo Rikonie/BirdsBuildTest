@@ -162,7 +162,7 @@ export const useWarehouseStore = defineStore('warehouse', {
             }
             localStorage.setItem("dealsIds", (JSON.stringify(this.dealsIds)))
             await this.getDeals()
-            //await this.searchData(this.search)
+            await this.searchData(this.search)
         }
     },
 });
