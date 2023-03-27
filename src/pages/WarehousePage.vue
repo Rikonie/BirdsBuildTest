@@ -1,6 +1,7 @@
 <template>
   <div v-if="!!warehouseStore.filteredData">
-    <CardComponent :data="warehouseStore.filteredData"/>
+    <div v-if="warehouseStore.filteredData?.length===0">Результаты не найдены</div>
+    <CardComponent v-else :data="warehouseStore.filteredData"/>
   </div>
   <p v-else>Загрузка</p>
 </template>

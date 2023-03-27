@@ -26,15 +26,14 @@
          style="flex-direction: row; justify-content: space-between; margin-top: 77px; margin-bottom:40px">
       <div class="buttonsFilter">
         <div v-for="val in filterData" :key="val">
-          <button @click="()=>{
-        filterMethod(val)
-        searchMethod()
-      }" v-bind:class="[warehouseStore.filter === val? 'buttonFilterClick': 'buttonFilter']">{{ val }}
+          <button @click="()=>{filterMethod(val);searchMethod()}"
+                  v-bind:class="[warehouseStore.filter === val? 'buttonFilterClick': 'buttonFilter']">
+            {{ val }}
           </button>
         </div>
       </div>
       <form @submit.prevent="searchMethod()" class="searchContainer">
-        <input v-model="searchName" class="inputSearch">
+        <input v-model="searchName"  class="inputSearch" @input="debounce(searchMethod)">
         <button class="buttonSearch">
           <img src="../../public/search.png" alt="search">
         </button>
@@ -60,8 +59,19 @@ export default defineComponent({
 
     const warehouseStore = useWarehouseStore();
 
+    function createDebounce() {
+      let timeout:any = null;
+      return function (fnc:any) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          fnc();
+        }, 1000);
+      };
+    }
+
     return {
       warehouseStore,
+      debounce: createDebounce(),
     }
   },
   methods: {

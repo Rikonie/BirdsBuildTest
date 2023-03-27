@@ -28,12 +28,17 @@ export const useWarehouseStore = defineStore('warehouse', {
                 this.favoriteIds = JSON.parse(idLocalStr)
             }
             if (this.favoriteIds) {
+                this.data?.map((i:CommonData)=>{
+                        i.isFavorite = !!this.favoriteIds?.includes(i?.id);
+                    }
+                )
                 this.favoritesData = this.data?.filter((x: any) => this.favoriteIds?.includes(x.id));
             } else {
                 this.favoritesData = [];
             }
         },
         async getDeals() {
+            this.loading=false
             if (!this.data) {
                 await this.fetchProducts();
             }
@@ -46,7 +51,6 @@ export const useWarehouseStore = defineStore('warehouse', {
             }
             if (this.dealsIds) {
                 this.dealsData = []
-                console.log("Ids " + this.dealsIds)
                 this.dealsIds?.map((i: any) => {
                     const item = this.data?.find((e: CommonData) => e.id == i.id)
                     if (item) {
@@ -57,7 +61,7 @@ export const useWarehouseStore = defineStore('warehouse', {
             } else {
                 this.dealsData = []
             }
-
+            this.loading=true
         },
         async fetchProducts() {
             setTimeout(async () => {
@@ -72,9 +76,9 @@ export const useWarehouseStore = defineStore('warehouse', {
                 if (!this.search) {
                     this.search = ""
                 }
+                await this.getFavorites()
                 await this.setFilter(this.filter)
                 await this.searchData(this.search)
-                this.loading=true
             }, 2000)
         },
         async setFilter(filter: string) {
@@ -83,7 +87,6 @@ export const useWarehouseStore = defineStore('warehouse', {
             this.favoritesData = this.data?.filter((x: any) => this.favoriteIds?.includes(x.id));
             await this.getDeals()
             if (filter == "Все типы") {
-                console.log(filter)
                 this.filteredData = this.data
             } else {
                 this.filteredData = this.data?.filter((x: CommonData) => x.type == filter);
@@ -94,6 +97,7 @@ export const useWarehouseStore = defineStore('warehouse', {
         async searchData(name: string) {
             await this.setFilter(this.filter)
             localStorage.setItem("search", name)
+            this.search=name
             if (name) {
                 this.filteredData = this.filteredData?.filter((x: CommonData) => x.name.toUpperCase().indexOf(name.toUpperCase()) != -1)
                 this.favoritesData = this.favoritesData?.filter((x: CommonData) => x.name.toUpperCase().indexOf(name.toUpperCase()) != -1)
@@ -123,7 +127,7 @@ export const useWarehouseStore = defineStore('warehouse', {
                 localStorage.setItem("favoritesIds", (JSON.stringify(this.favoriteIds)))
             }
             await this.getFavorites()
-            await this.setFilter(this.filter)
+            await this.searchData(this.search)
         },
         async addToDeals(item: CommonData) {
             await this.getDeals()
@@ -137,17 +141,16 @@ export const useWarehouseStore = defineStore('warehouse', {
             }
             localStorage.setItem("dealsIds", (JSON.stringify(this.dealsIds)))
             await this.getDeals()
-            await this.setFilter(this.filter)
+            await this.searchData(this.search)
+
         },
         async toPaid (item:any) {
             await this.getDeals()
             const arrStr = localStorage.getItem("dealsIds")
             if (arrStr){
                 const arr = JSON.parse(arrStr)
-                console.log("aerr "+arrStr)
                 const el = arr.findIndex((e:any)=>e.id==item.id && e.paid == false)
                 if(el!=-1){
-                    console.log("te "+el)
                     arr[el].paid=true
                     this.dealsIds=arr
                 }
@@ -159,6 +162,7 @@ export const useWarehouseStore = defineStore('warehouse', {
             }
             localStorage.setItem("dealsIds", (JSON.stringify(this.dealsIds)))
             await this.getDeals()
+            //await this.searchData(this.search)
         }
     },
 });
